@@ -2,116 +2,71 @@ Converting .jpg files from Google Earth to GeoTIFF files for WED.
 
 I do not recommend using this for entire airports. You should use this for small areas along with SASPlanet imagery.
 
+## You Will Need
+1. Google Earth Pro (https://www.google.com/earth/versions/#earth-pro)
+2. QGIS (https://qgis.org/en/site/forusers/download.html)
+
 ## Export an image from Google Earth
 
-First, you will need to export an image from google earth.
+First, find the airport or area you wish to use. Zoom the map so that you can see only the area you wish to download. 
+In the top right, you will see a circle with an N and a small eye. This aligns how you see the image. In the eye, press the left mouse button and drag down until the view is looking **straight down**. After you do this, click the N to align the image perfectly. Lastly, uncheck 3D Buildings and Places under the "Layers" Tab.
 
-1. Open Google Earth Pro ([desktop version](https://www.google.com/earth/versions/#earth-pro))
-2. Browse to where you want to be.
-3. Click the **Save image** button
-4. Increase the resolution of your image + remove all of the extraneous elements
-5. Click **Save image** to save your image
+Next, you need to save the image. 
+To do this, go to "File" click "Save" and choose "Save as Image"
+Click the "Map Options" Menu and uncheck all boxes for the clearest image. Click "Resolution" and choose Maximum. Finally, you will save your image. Click "Save Image" and save it somewhere on your computer.
 
-![Google earth export](images/00-google-earth.png)
+## Importing Imagery to QGIS
 
-## Adding our reference layer
+To convert this imagery to be useable for our purposes, we will be using QGIS. 
 
-First we need to add an underlay. You will use this to match up where your map belongs.
+When you first open QGIS, you should see a screen with a "News" tab. On the left side, you should see a tab called XYZ Tiles. Expand this. 
 
-These are called "XYZ" layers, and they're built into QGIS. You can click and drag them from the **Browser** panel into your **Layers** panel. I'm using OpenStreetMap, because it's apparently the only one already in QGIS.
-
-![XYZ layer](images/01-xyz.png)
+These are XYZ Layers. These are maps that you will need to align your imagery correctly.
 
 > If you don't have the Browser panel, you can select **View > Panels > Browser** to make it appear.
 
-However, you will need satellite imagery to make this work for IFAET.
+You will need satellite imagery to make this work for airport editing.
 
-Right-click **XYZ Tiles** and click **New Connection**. You will use ESRI Imagery, this is the same imagery as the default WED imagery.
+Right-click **XYZ Tiles** and click **New Connection**. You will be using ESRI Imagery, this is the same imagery as the default WED imagery.
 
 ```
 https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}
 ```
 
-![XYZ layer new connection](images/01-xyz-new-connection.png)
+Fill in the name box with any name. I named mine "ESRI Imagery". Under the URL Tab, paste the link above. Finalluy, up the maximum zoom level. I recommend something over 21 as it will be helpful when aligning your imagery.
 
-Fill in the box..
+Finally, click "Ok" and then drag your new map down to the "Layers" tab.
 
-![XYZ layer filled in details](images/01-xyz-filled.png)
-
-And then drag it to your map!
-
-![better XYZ layer from ESRI](images/01-xyz-better.png)
-
-> {z} is zoom, and {x} and {y} are the [coordinates of the file](https://developers.google.com/maps/documentation/javascript/coordinates#tile-coordinates).
-
-## Georeferencing
-
-Now we need to georeference, which is how you give your image a latitude/longitude (and stretch it to make it look 'right').
+Now we need to georeference the image. This will make your image look correct when you import it into WED.
 
 Go to **Raster > Georeferencer**
+Click the box in the top left to add a new raster image. This is the image you saved in Google Earth.
 
-![](images/02-georef.png)
+Now, you will need to select points on your google earth image to match it with the ESRI imagery.
 
-Click the box in the top left to add a new raster image. When it asks you for your CRS, pick `WGS 84 EPSG:4326` (I actually don't think it matters).
+You should see a + sign when you hover over the image. Zoom into your image, and pick a easy to see point that you can easily match on ESRI. Click this spot.
+A box that asks you to enter map coordinates should appear. You will not be entering coordinates by hand, so click "From Map Canvas". This will bring you to your ESRI imagery. On your ESRI imagery, locate the *exact* same point you located on your google earth imagery. You want to match this as closely as possible for the most accurate imagery. 
+Repeat this many times, the more points, the more accurate the imagery. I used 50+ on my first test run, but you may want more or less depending on the size of your image. I find that using easy to replicate areas such as taxiway edges, line intersections, and buildings is easiest. You also will want several points on the edges of the image.
 
-![](images/02-add-raster.png)
+Next, click the **gear icon**.
 
-Now you'll need to match up points on your image with points on your basemap. First, click somewhere on your image that is memorable - the edge of a peninsula, or a curve in the land or something.
+You should see several boxes. For the top box, choose "Polynomial 3". For the second box, choose "Lanczos". For the third box, Choose "Default CRS: EPSG:4326 - WGS 84"
 
-![](images/02-click-1.png)
+Under "Output Raser" make sure you have selected the area you want to export your GeoTIFF file to. I export them to my Satellite Images folder.
 
-QGIS will ask you, where is this?
+Next, click the green **play button**. This may take a minute. Once it is finished, minimize the georferencer tab. You will see that your image has been overlayed onto the ESRI imagery. Under the "Layers" tab, right click your Google Earth imagery. Choose the "Transparency" tab. Move the slider down to about 50%. Click Apply, and then OK. Check it. Is it accurate? If not, head back over to the georeferencer and add more points. Repeat the above processes until you are satisfied with your imagery.
 
-![](images/02-map-coords.png)
+Once you are satisfied, you can close the georeferencer window. Whether or not you want to save the points is up to you. 
 
-You don't memorize lat and lon of random points in the world, so you click **From map canvas**.
+## Exporting Our Imagery
 
-Click the same point in your XYZ layer and _tada!_, it filled the points in for you. Click **OK**.
+To export our imagery, navigate to the "Layers" tab. Right click your Google Earth layer and choose "Export". From here, choose "Save As". You should see a window with several settings.
 
-![](images/02-click-2.png)
+At the very top you will see "Output Mode". You want to choose **Rendered Image**. Below, you will see Format. Leave this as GeoTIFF. Next, you will name your file. Click the 3 dots next to the name if you wish to change where you want to export it. Next, click the "CRS" tab. You will choose "Default CRS: EPSG:4326 - WGS 84"
 
-![](images/02-post-click.png)
+All you need to do now is export your image and load it into WED. 
 
-Do this a million times, and eventually you'll have a million georeferenced points. You want as many as possible for airport editing. The more points, the more accurate your image.
-
-![](images/02-lots-of-points.png)
-
-Now click the **gear icon** to change the settings.
-
-![](images/02-gear.png)
-
-According to [this random internet person](https://ieqgis.wordpress.com/2014/05/22/how-to-georeference-a-map-in-qgis/) you should use **Polynomial 3** for Transformation type and **Lanczos** for Resampling method.
-
-Make sure you've selected an output file and **Load in QGIS when done** is checked and click **OK**
-
-![](images/02-settings.png)
-
-Now click the green **play button**. It'll take some time thinking, then..... it'll look like nothing happened! But if you minimize the georeferencer you'll see it got exported and put onto the map.
-
-![](images/02-play.png)
-
-![](images/02-played.png)
-
-To check that it's okay, right click the new layer, select **Properties**, go to the **Transparency** section and dial it down to 50% or so.
-
-![](images/02-properties.png)
-
-![](images/02-transparency.png)
-
-![](images/02-matched.png)
-
-If it doesn't look good, delete the layer, open the georeferencer window (remember you only minimized it!) and add some more points or delete ones you did poorly.
-
-Once you're satisfied, you can close the georeferencing plugin. It'll ask if you want to save the points.... but I say no!
-
-## Clipping our raster
-
-Now we have a beautiful image that is way too big and with all kinds of weird black stuff where it got stretched to fit on the map.
-
-![](images/03-black-stuff.png)
-
-
-
+Congratulations! You've successfully taken Google Earth Imagery and imported it into World Editor.
 
 
 
