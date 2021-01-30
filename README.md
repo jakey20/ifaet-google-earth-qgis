@@ -6,6 +6,8 @@ I do not recommend using this for entire airports. You should use this for small
 1. Google Earth Pro (https://www.google.com/earth/versions/#earth-pro)
 2. QGIS (https://qgis.org/en/site/forusers/download.html)
 
+## Installation
+To install QGIS, first download it from the website. I recommend one of the top 2 options. Most people will probably want the 64 bit version unless you for some reason have a 32bit computer. You should be prompted to choose a download site during the setup process. I used the default site which should be the top option. .
 ## Export an image from Google Earth
 
 First, find the airport or area you wish to use. Zoom the map so that you can see only the area you wish to download. 
