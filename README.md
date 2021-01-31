@@ -52,7 +52,7 @@ Repeat this many times, the more points, the more accurate the imagery. I used 5
 
 Next, click the **gear icon**.
 
-You should see several boxes. For the top box, choose "Polynomial 3". For the second box, choose "Lanczos". For the third box, Choose "Default CRS: EPSG:4326 - WGS 84"
+You should see several boxes. For the top box, choose "Polynomial 3". For the second box, choose "Lanczos". For the third box, Choose "EPSG:3857 - WGS 84/Psuedo-Mercator"
 
 Under "Output Raser" make sure you have selected the area you want to export your GeoTIFF file to. I export them to my Satellite Images folder.
 
